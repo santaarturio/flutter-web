@@ -1,7 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+
+/* notes */
+// accessibility features are activated on mobile by default
+// SemanticsBinding.instance.ensureSemantics(); - to explicitly active web accessibility features
+// wrap app with SelectionArea - to explicitly active select-copy capabilities
+// web search nor working, flutter limitations
+// show snack bar on button pressed to provide interaction result
 
 void main() {
   runApp(const MarsApp());
+  if (kIsWeb) {
+    // TODO: Check how it works on IOS / Android
+    SemanticsBinding.instance.ensureSemantics();
+  }
 }
 
 class MarsApp extends StatelessWidget {
@@ -10,7 +23,7 @@ class MarsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mars 2030',
+      title: 'Mars 2030 Web Site',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -22,7 +35,7 @@ class MarsApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 16),
         ),
       ),
-      home: const MarsHomePage(),
+      home: const SelectionArea(child: const MarsHomePage()),
     );
   }
 }
@@ -80,7 +93,20 @@ class HeroSection extends StatelessWidget {
           const SizedBox(height: 16),
           const Text("Join humanity’s next giant leap."),
           const SizedBox(height: 24),
-          ElevatedButton(onPressed: () {}, child: const Text("Join Mission")),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Done"),
+                  content: const Text(
+                    "Your request to join Mars 2030 mission was successfully sent",
+                  ),
+                ),
+              );
+            },
+            child: const Text("Join Mission"),
+          ),
         ],
       ),
     );
@@ -190,11 +216,12 @@ class _ContactSectionState extends State<ContactSection> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text("Contact", style: Theme.of(context).textTheme.headlineMedium),
+          Text("Contact Us", style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
           Form(
             key: _formKey,
             child: Column(
+              spacing: 16,
               children: [
                 TextFormField(
                   decoration: const InputDecoration(labelText: "Name"),
@@ -202,10 +229,8 @@ class _ContactSectionState extends State<ContactSection> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: "Message"),
-                  maxLines: 3,
                   onSaved: (value) => message = value ?? "",
                 ),
-                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     _formKey.currentState?.save();
