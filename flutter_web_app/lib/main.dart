@@ -1,15 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-/* notes */
-// accessibility features are activated on mobile by default
-// SemanticsBinding.instance.ensureSemantics(); - to explicitly active web accessibility features
-// wrap app with SelectionArea - to explicitly active select-copy capabilities
-// web search nor working, flutter limitations
-// show snack bar on button pressed to provide interaction result
+import 'generated/l10n.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MarsApp());
   if (kIsWeb) {
     // TODO: Check how it works on IOS / Android
@@ -23,8 +20,15 @@ class MarsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mars 2030 Web Site',
+      title: "test",
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        S.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.deepOrange,
@@ -35,7 +39,7 @@ class MarsApp extends StatelessWidget {
           bodyMedium: TextStyle(fontSize: 16),
         ),
       ),
-      home: const SelectionArea(child: const MarsHomePage()),
+      home: const SelectionArea(child: MarsHomePage()),
     );
   }
 }
@@ -45,13 +49,18 @@ class MarsHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = S.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🚀 Mars 2030'),
+        title: Text(locale.homeTitle),
         actions: [
-          TextButton(onPressed: () {}, child: const Text("Missions")),
-          TextButton(onPressed: () {}, child: const Text("Crew")),
-          TextButton(onPressed: () {}, child: const Text("Contact")),
+          TextButton(
+            onPressed: () {},
+            child: Text(locale.homeMissions, locale: Locale('en')),
+          ),
+          TextButton(onPressed: () {}, child: Text(locale.homeCrew)),
+          TextButton(onPressed: () {}, child: Text(locale.homeContact)),
         ],
       ),
       body: SingleChildScrollView(
@@ -74,6 +83,8 @@ class HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = S.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
       width: double.infinity,
@@ -87,11 +98,11 @@ class HeroSection extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "Colonize Mars",
+            locale.homeHeroTitle,
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 16),
-          const Text("Join humanity’s next giant leap."),
+          Text(locale.homeHeroSubtitle),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
@@ -105,7 +116,7 @@ class HeroSection extends StatelessWidget {
                 ),
               );
             },
-            child: const Text("Join Mission"),
+            child: Text(locale.joinButton),
           ),
         ],
       ),
@@ -262,3 +273,11 @@ class Footer extends StatelessWidget {
     );
   }
 }
+
+/* notes */
+// accessibility features are activated on mobile by default
+// SemanticsBinding.instance.ensureSemantics(); - to explicitly active web accessibility features
+// wrap app with SelectionArea - to explicitly active select-copy capabilities
+// web search nor working, flutter limitations
+// show snack bar on button pressed to provide interaction result
+// Safari merge 2-4 grid items into 1 item, 1st one is ok.

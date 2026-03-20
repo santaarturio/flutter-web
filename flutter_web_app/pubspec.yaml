@@ -9,9 +9,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  intl_utils: 2.8.14
+  build_runner: 2.13.0
+
+flutter_intl:
+  enabled: true
 
 dependency_overrides:
-  meta: ^1.17.0
+  intl_utils: 2.8.14
+  meta: 1.17.0
 
 flutter:
   uses-material-design: true
